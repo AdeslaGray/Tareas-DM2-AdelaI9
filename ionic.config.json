@@ -1,0 +1,7 @@
+{
+  "name": "taxi-driver-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
