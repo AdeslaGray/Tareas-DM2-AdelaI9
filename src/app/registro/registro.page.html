@@ -1,0 +1,111 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="success">
+    <ion-buttons slot="start" *ngIf="pasoActual > 1">
+      <ion-button (click)="anteriorPaso()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+        Regresar
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- PASO 1: Correo Electrónico -->
+  <div *ngIf="pasoActual === 1">
+    <h2>Verificación de correo electrónico</h2>
+    <p>Ingrese su correo para iniciar el proceso de registro.</p>
+
+    <form [formGroup]="step1Form">
+      <ion-item class="custom-input" [class.input-error]="step1Form.get('email')?.invalid && step1Form.get('email')?.touched">
+        <ion-label position="floating">Correo electrónico</ion-label>
+        <ion-input type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <div class="error-msg" *ngIf="step1Form.get('email')?.invalid && step1Form.get('email')?.touched">
+        Ingrese un correo electrónico válido.
+      </div>
+
+      <ion-button expand="block" color="success" class="ion-margin-top" (click)="siguientePaso()">
+        Continuar
+      </ion-button>
+    </form>
+  </div>
+
+  <!-- PASO 2: Validación OTP -->
+  <div *ngIf="pasoActual === 2">
+    <p class="subtitle">Verificación de correo electrónico</p>
+    <h2>Ingrese su código OTP</h2>
+    <p>Introduzca el código de 6 dígitos enviado a su correo.</p>
+
+    <form [formGroup]="step2Form">
+      <ion-item class="custom-input" [class.input-error]="step2Form.get('token')?.invalid && step2Form.get('token')?.touched">
+        <ion-label position="floating">Código OTP (6 dígitos)</ion-label>
+        <ion-input type="text" maxlength="6" formControlName="token"></ion-input>
+      </ion-item>
+      <div class="error-msg" *ngIf="step2Form.get('token')?.invalid && step2Form.get('token')?.touched">
+        El token debe ser de 6 dígitos
+      </div>
+
+      <ion-button expand="block" color="success" class="ion-margin-top" (click)="siguientePaso()">
+        Verificar Token
+      </ion-button>
+    </form>
+  </div>
+
+  <!-- PASO 3: Información Personal y Seguridad -->
+  <div *ngIf="pasoActual === 3">
+    <h2>Datos Personales</h2>
+
+    <form [formGroup]="step3Form" (ngSubmit)="onSubmit()">
+      <!-- Nombre -->
+      <ion-item class="custom-input" [class.input-error]="step3Form.get('nombre')?.invalid && step3Form.get('nombre')?.touched">
+        <ion-label position="floating">Nombre</ion-label>
+        <ion-input type="text" formControlName="nombre"></ion-input>
+      </ion-item>
+      <div class="error-msg" *ngIf="step3Form.get('nombre')?.invalid && step3Form.get('nombre')?.touched">
+        * El nombre es requerido
+      </div>
+
+      <!-- Apellido -->
+      <ion-item class="custom-input" [class.input-error]="step3Form.get('apellido')?.invalid && step3Form.get('apellido')?.touched">
+        <ion-label position="floating">Apellido</ion-label>
+        <ion-input type="text" formControlName="apellido"></ion-input>
+      </ion-item>
+
+      <!-- DNI -->
+      <ion-item class="custom-input" [class.input-error]="step3Form.get('dni')?.invalid && step3Form.get('dni')?.touched">
+        <ion-label position="floating">DNI</ion-label>
+        <ion-input type="text" formControlName="dni"></ion-input>
+      </ion-item>
+
+      <!-- Teléfono -->
+      <ion-item class="custom-input" [class.input-error]="step3Form.get('telefono')?.invalid && step3Form.get('telefono')?.touched">
+        <ion-label position="floating">Teléfono (+504)</ion-label>
+        <ion-input type="tel" formControlName="telefono"></ion-input>
+      </ion-item>
+
+      <!-- Dirección -->
+      <ion-item class="custom-input" [class.input-error]="step3Form.get('direccion')?.invalid && step3Form.get('direccion')?.touched">
+        <ion-label position="floating">Dirección Exacta</ion-label>
+        <ion-input type="text" formControlName="direccion"></ion-input>
+      </ion-item>
+      <div class="error-msg" *ngIf="step3Form.get('direccion')?.invalid && step3Form.get('direccion')?.touched">
+        La dirección debe ser más específica
+      </div>
+
+      <!-- Contraseña -->
+      <ion-item class="custom-input" [class.input-error]="step3Form.get('password')?.invalid && step3Form.get('password')?.touched">
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password" formControlName="password"></ion-input>
+      </ion-item>
+      <div class="error-msg" *ngIf="step3Form.get('password')?.invalid && step3Form.get('password')?.touched">
+        La contraseña debe tener al menos 8 caracteres, incluir una mayúscula y un número.
+      </div>
+
+      <ion-button expand="block" color="success" class="ion-margin-top" type="submit">
+        Crear una cuenta
+      </ion-button>
+    </form>
+  </div>
+
+</ion-content>

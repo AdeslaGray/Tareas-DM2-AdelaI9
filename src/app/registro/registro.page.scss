@@ -1,0 +1,24 @@
+/* Borde rojo cuando el campo inválido ha sido tocado (touched) */
+.custom-input.input-error {
+  --border-color: #eb445a !important;
+  --highlight-color-invalid: #eb445a !important;
+  border-bottom: 2px solid #eb445a !important;
+}
+
+/* Manejo directo por clases de Angular */
+ion-item.ng-touched.ng-invalid {
+  --border-color: #eb445a !important;
+  border-bottom: 2px solid #eb445a !important;
+}
+
+.error-msg {
+  color: #eb445a;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-left: 16px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #666;
+}

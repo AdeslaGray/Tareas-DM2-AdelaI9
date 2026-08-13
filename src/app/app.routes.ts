@@ -7,11 +7,16 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'registro',
     pathMatch: 'full',
   },
   {
     path: 'earnings',
     loadComponent: () => import('./pages/rides/earnings/earnings.page').then( m => m.EarningsPage)
   },
+  {
+    path: 'registro',
+    loadComponent: () => import('./registro/registro.page').then( m => m.RegistroPage)
+  },
+
 ];
