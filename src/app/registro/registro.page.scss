@@ -1,24 +1,235 @@
-/* Borde rojo cuando el campo inválido ha sido tocado (touched) */
-.custom-input.input-error {
-  --border-color: #eb445a !important;
-  --highlight-color-invalid: #eb445a !important;
-  border-bottom: 2px solid #eb445a !important;
+/* Encabezado Verde Curvo */
+.green-header {
+  background-color: #6ebd45;
+  height: 180px;
+  border-bottom-left-radius: 50% 35px;
+  border-bottom-right-radius: 50% 35px;
+  padding: 30px 16px 0 16px;
+  position: relative;
+
+  .back-btn {
+    --color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: none;
+  }
+
+  &.header-with-avatar {
+    height: 160px;
+  }
 }
 
-/* Manejo directo por clases de Angular */
-ion-item.ng-touched.ng-invalid {
-  --border-color: #eb445a !important;
-  border-bottom: 2px solid #eb445a !important;
+.avatar-badge {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #d8dddf;
+  border: 4px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon {
+    font-size: 38px;
+    color: #7b868a;
+  }
+}
+
+.content-body {
+  padding: 24px 20px;
+
+  &.body-offset {
+    padding-top: 55px;
+  }
+
+  .greeting {
+    color: #666666;
+    font-size: 15px;
+  }
+
+  .sub-header-text {
+    font-size: 13px;
+    color: #666666;
+    display: block;
+  }
+
+  .main-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111111;
+    margin: 4px 0 16px 0;
+  }
+
+  .desc-text {
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.4;
+    margin-bottom: 24px;
+  }
+
+  .green-link {
+    color: #6ebd45;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .green-text {
+    color: #6ebd45;
+  }
+}
+
+.otp-input {
+  background: #f7f8fa;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 12px;
+  font-weight: 700;
+  --padding-start: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.resend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 30px;
+
+  .resend-text {
+    font-size: 13px;
+    color: #555555;
+  }
+
+  .circle-next-btn {
+    --border-radius: 50%;
+    --padding-start: 0;
+    --padding-end: 0;
+    width: 48px;
+    height: 48px;
+    --background: #d0d7dd;
+    --color: #ffffff;
+
+    &[disabled="false"], &:not([disabled]) {
+      --background: #6ebd45;
+    }
+  }
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .tab-btn {
+    flex: 1;
+    height: 38px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+
+    &.active {
+      background: #6ebd45;
+      color: #ffffff;
+      border: none;
+    }
+
+    &.outline {
+      background: #ffffff;
+      color: #6ebd45;
+      border: 1.5px solid #6ebd45;
+    }
+  }
+}
+
+.line-input-group {
+  margin-bottom: 18px;
+
+  label {
+    font-size: 12px;
+    color: #777777;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .line-input {
+    --border-color: transparent;
+    border-bottom: 1.5px solid #cccccc;
+    --padding-start: 0;
+    font-size: 15px;
+    transition: border-color 0.2s ease-in-out;
+
+    &:focus-within {
+      border-bottom-color: #6ebd45;
+    }
+  }
+
+  &.field-error {
+    label {
+      color: #eb445a;
+    }
+
+    .line-input {
+      border-bottom-color: #eb445a !important;
+    }
+  }
+
+  .password-wrapper {
+    position: relative;
+
+    .eye-icon {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: #6ebd45;
+      z-index: 10;
+    }
+  }
+}
+
+.input-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.06);
+  padding: 4px 12px;
+  margin-bottom: 20px;
+}
+
+.terms-text {
+  font-size: 13px;
+  color: #555555;
+  margin-bottom: 28px;
+  line-height: 1.5;
+
+  strong {
+    color: #000000;
+  }
+}
+
+.action-btn {
+  --border-radius: 12px;
+  height: 50px;
+  font-weight: 600;
+  text-transform: none;
+
+  &.outline-card-btn {
+    --background: #ffffff;
+    --color: #6ebd45;
+    --border-color: #e2e8ed;
+    --border-style: solid;
+    --border-width: 1px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  }
 }
 
 .error-msg {
   color: #eb445a;
-  font-size: 12px;
+  font-size: 11px;
   margin-top: 4px;
-  margin-left: 16px;
-}
-
-.subtitle {
-  font-size: 13px;
-  color: #666;
+  font-weight: 500;
 }
