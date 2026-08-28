@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
 
 import { ResetPasswordModalComponent } from './reset-password-modal.component';
 
@@ -9,8 +8,7 @@ describe('ResetPasswordModalComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ResetPasswordModalComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [ResetPasswordModalComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ResetPasswordModalComponent);
