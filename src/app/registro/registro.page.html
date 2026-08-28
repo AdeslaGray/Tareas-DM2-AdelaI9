@@ -1,6 +1,6 @@
 <ion-content class="ion-no-padding">
 
-  <!-- ==================== PANTALLA 1: CORREO ==================== -->
+  <!-- ==================== PASO 1: VERIFICACIÓN DE CORREO ==================== -->
   <div *ngIf="pasoActual === 1" class="step-container">
     <div class="green-header">
       <ion-button fill="clear" color="light" class="back-btn">
@@ -13,8 +13,8 @@
       <span class="greeting">Hola, ¡un placer conocerte!</span>
       <h1 class="main-title">¡Únase a nuestra empresa!</h1>
 
-      <form [formGroup]="step1Form">
-        <div class="input-card">
+      <form [formGroup]="step1Form" (ngSubmit)="enviarToken()">
+        <div class="input-card" [class.field-error-card]="isFieldInvalid(step1Form, 'email')">
           <ion-input 
             type="email" 
             formControlName="email" 
@@ -22,8 +22,9 @@
           </ion-input>
         </div>
 
-        <div *ngIf="step1Form.get('email')?.touched && step1Form.get('email')?.invalid" class="error-msg">
-          Ingrese un correo electrónico válido.
+        <div *ngIf="isFieldInvalid(step1Form, 'email')" class="error-msg">
+          <span *ngIf="step1Form.get('email')?.hasError('required')">El correo es requerido.</span>
+          <span *ngIf="step1Form.get('email')?.hasError('email')">Ingrese un correo electrónico válido.</span>
         </div>
 
         <p class="terms-text">
@@ -33,17 +34,18 @@
 
         <ion-button 
           expand="block" 
-          class="action-btn" 
-          [disabled]="step1Form.invalid"
-          (click)="siguientePaso()">
-          Continuar
-          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+          type="submit"
+          class="action-btn"
+          [disabled]="step1Form.invalid || isLoading">
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoading">Continuar</span>
+          <ion-icon *ngIf="!isLoading" name="arrow-forward-outline" slot="end"></ion-icon>
         </ion-button>
       </form>
     </div>
   </div>
 
-  <!-- ==================== PANTALLA 2: CÓDIGO OTP ==================== -->
+  <!-- ==================== PASO 2: VALIDACIÓN DE TOKEN (OTP) ==================== -->
   <div *ngIf="pasoActual === 2" class="step-container">
     <div class="green-header">
       <ion-button fill="clear" color="light" class="back-btn" (click)="anteriorPaso()">
@@ -61,8 +63,8 @@
         <span class="green-link" (click)="anteriorPaso()">¿Está correcta tu dirección?</span>
       </p>
 
-      <form [formGroup]="step2Form">
-        <div class="otp-boxes">
+      <form [formGroup]="step2Form" (ngSubmit)="verificarToken()">
+        <div class="otp-boxes" [class.field-error-card]="isFieldInvalid(step2Form, 'token')">
           <ion-input 
             type="text" 
             maxlength="6" 
@@ -72,107 +74,64 @@
           </ion-input>
         </div>
 
-        <div *ngIf="step2Form.get('token')?.touched && step2Form.get('token')?.invalid" class="error-msg">
-          El token debe ser de 6 dígitos
+        <div *ngIf="isFieldInvalid(step2Form, 'token')" class="error-msg">
+          El token debe ser de 6 dígitos.
         </div>
 
         <div class="resend-row">
           <span class="resend-text">Reenviar código en <strong class="green-text">10 segundos</strong></span>
-          <ion-button class="circle-next-btn" (click)="siguientePaso()" [disabled]="step2Form.invalid">
-            <ion-icon name="arrow-forward-outline"></ion-icon>
+          <ion-button type="submit" class="circle-next-btn" [disabled]="step2Form.invalid || isLoading">
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <ion-icon *ngIf="!isLoading" name="arrow-forward-outline"></ion-icon>
           </ion-button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ==================== PANTALLA 3: INFORMACIÓN PERSONAL Y SEGURIDAD ==================== -->
-  <div *ngIf="pasoActual === 3" class="step-container">
-    <div class="green-header header-with-avatar">
-      <ion-button fill="clear" color="light" class="back-btn" (click)="anteriorPaso()">
-        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
-        Regresar
-      </ion-button>
-      
-      <div class="avatar-badge">
-        <ion-icon name="camera-outline"></ion-icon>
+  <!-- ==================== PASO 3: LOGIN ==================== -->
+  <div *ngIf="pasoActual === 3" class="login-container">
+    <div class="login-header-illustration">
+      <span class="brand-text">Tap'nPay</span>
+      <div class="shield-badge">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
       </div>
     </div>
 
-    <div class="content-body body-offset">
-      <div class="tab-buttons">
-        <button type="button" class="tab-btn active">Dato</button>
-        <button type="button" class="tab-btn outline">Documento</button>
-      </div>
-
-      <form [formGroup]="step3Form" (ngSubmit)="onSubmit()">
-        
-        <div class="line-input-group" [class.field-error]="isFieldInvalid('nombre')">
-          <label>Nombre</label>
-          <ion-input type="text" formControlName="nombre" class="line-input"></ion-input>
-          <div *ngIf="isFieldInvalid('nombre')" class="error-msg">
-            <span *ngIf="step3Form.get('nombre')?.hasError('required')">El nombre es requerido</span>
-            <span *ngIf="step3Form.get('nombre')?.hasError('pattern')">Solo se permiten letras</span>
+    <div class="login-body">
+      <h2 class="login-title">Inicio de Sesión</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+        <div class="form-group" [class.field-error]="isFieldInvalid(loginForm, 'email')">
+          <label class="field-label">Correo electrónico</label>
+          <div class="custom-card-input">
+            <ion-input type="email" formControlName="email" placeholder="Ingrese su correo"></ion-input>
+          </div>
+          <div *ngIf="isFieldInvalid(loginForm, 'email')" class="error-msg">
+            <span *ngIf="loginForm.get('email')?.hasError('required')">* El correo es requerido.</span>
+            <span *ngIf="loginForm.get('email')?.hasError('email')">* Debe ser un correo electrónico válido.</span>
           </div>
         </div>
 
-        <div class="line-input-group" [class.field-error]="isFieldInvalid('apellido')">
-          <label>Apellido</label>
-          <ion-input type="text" formControlName="apellido" class="line-input"></ion-input>
-          <div *ngIf="isFieldInvalid('apellido')" class="error-msg">
-            <span *ngIf="step3Form.get('apellido')?.hasError('required')">El apellido es requerido</span>
-            <span *ngIf="step3Form.get('apellido')?.hasError('pattern')">Solo se permiten letras</span>
-          </div>
-        </div>
-
-        <div class="line-input-group" [class.field-error]="isFieldInvalid('dni')">
-          <label>DNI</label>
-          <ion-input type="text" formControlName="dni" class="line-input"></ion-input>
-          <div *ngIf="isFieldInvalid('dni')" class="error-msg">
-            <span *ngIf="step3Form.get('dni')?.hasError('required')">El DNI es requerido</span>
-            <span *ngIf="step3Form.get('dni')?.hasError('pattern')">El DNI solo debe contener números</span>
-          </div>
-        </div>
-
-        <div class="line-input-group" [class.field-error]="isFieldInvalid('telefono')">
-          <label>Teléfono</label>
-          <ion-input type="tel" formControlName="telefono" class="line-input"></ion-input>
-          <div *ngIf="isFieldInvalid('telefono')" class="error-msg">
-            <span *ngIf="step3Form.get('telefono')?.hasError('required')">El teléfono es requerido</span>
-            <span *ngIf="step3Form.get('telefono')?.hasError('pattern')">El teléfono solo debe contener números</span>
-          </div>
-        </div>
-
-        <div class="line-input-group" [class.field-error]="isFieldInvalid('direccion')">
-          <label>Dirección</label>
-          <ion-input type="text" formControlName="direccion" class="line-input"></ion-input>
-          <div *ngIf="isFieldInvalid('direccion')" class="error-msg">
-            <span *ngIf="step3Form.get('direccion')?.hasError('required')">La dirección es requerida</span>
-            <span *ngIf="step3Form.get('direccion')?.hasError('minlength')">La dirección debe ser más específica</span>
-          </div>
-        </div>
-
-        <div class="line-input-group" [class.field-error]="isFieldInvalid('password')">
-          <label>Contraseña</label>
-          <div class="password-wrapper">
-            <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="line-input"></ion-input>
+        <div class="form-group" [class.field-error]="isFieldInvalid(loginForm, 'password')">
+          <label class="field-label">Contraseña</label>
+          <div class="custom-card-input password-input-wrapper">
+            <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Ingrese su contraseña"></ion-input>
             <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" (click)="togglePassword()" class="eye-icon"></ion-icon>
           </div>
-          <div *ngIf="isFieldInvalid('password')" class="error-msg">
-            <span *ngIf="step3Form.get('password')?.hasError('required')">La contraseña es requerida</span>
-            <span *ngIf="step3Form.get('password')?.hasError('minlength') || step3Form.get('password')?.hasError('pattern')">
-              La contraseña debe tener al menos 8 caracteres, una mayúscula y un número
+          <div *ngIf="isFieldInvalid(loginForm, 'password')" class="error-msg">
+            <span *ngIf="loginForm.get('password')?.hasError('required')">* La contraseña es requerida.</span>
+            <span *ngIf="loginForm.get('password')?.hasError('minlength') || loginForm.get('password')?.hasError('pattern')">
+              * La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.
             </span>
           </div>
         </div>
 
-        <ion-button 
-          expand="block" 
-          type="submit" 
-          class="action-btn outline-card-btn ion-margin-top"
-          [disabled]="step3Form.invalid">
-          Crear una cuenta
-          <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+        <div class="forgot-pass-wrapper">
+          <a class="forgot-pass-link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <ion-button expand="block" type="submit" class="purple-login-btn" [disabled]="loginForm.invalid">
+          Ingresar
         </ion-button>
       </form>
     </div>
