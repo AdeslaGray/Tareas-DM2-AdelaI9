@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">taxi-driver-app</string>
+    <string name="title_activity_main">taxi-driver-app</string>
+    <string name="package_name">com.dmovil2.taxiapp</string>
+    <string name="custom_url_scheme">com.dmovil2.taxiapp</string>
+</resources>
