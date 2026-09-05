@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { 
   arrowBackOutline, 
@@ -11,6 +12,7 @@ import {
   shieldCheckmarkOutline
 } from 'ionicons/icons';
 import { EmailVerificationService } from '../services/email-verification.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-registro',
@@ -31,7 +33,9 @@ export class RegistroPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private emailService: EmailVerificationService,
-    private toastCtrl: ToastController
+    private authService: AuthService,
+    private toastCtrl: ToastController,
+    private router: Router
   ) {
     addIcons({ 
       arrowBackOutline, 
@@ -43,21 +47,18 @@ export class RegistroPage implements OnInit {
   }
 
   ngOnInit() {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]]
+    });
+
     this.step1Form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
+      aceptaTerminos: [false, Validators.requiredTrue]
     });
 
     this.step2Form = this.fb.group({
       token: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]]
-    });
-
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(8),
-        Validators.pattern('^(?=.*[A-Z])(?=.*\\d).+$')
-      ]]
     });
   }
 
@@ -80,15 +81,76 @@ export class RegistroPage implements OnInit {
     return !!(field && field.invalid && field.touched);
   }
 
-  siguientePaso() {
-    if (this.pasoActual === 1) {
-      this.enviarToken();
-    } else if (this.pasoActual === 2) {
-      this.verificarToken();
-    }
+  get emailLogin() {
+    return this.loginForm.get('email');
   }
 
-  enviarToken() {
+  get isEmailLoginInvalid(): boolean {
+    return !!(this.emailLogin?.touched && this.emailLogin.invalid);
+  }
+
+  get passwordLogin() {
+    return this.loginForm.get('password');
+  }
+
+  get isPasswordLoginInvalid(): boolean {
+    return !!(this.passwordLogin?.touched && this.passwordLogin.invalid);
+  }
+
+  get emailRegistro() {
+    return this.step1Form.get('email');
+  }
+
+  get isEmailRegistroInvalid(): boolean {
+    return !!(this.emailRegistro?.touched && this.emailRegistro.invalid);
+  }
+
+  get aceptaTerminos() {
+    return this.step1Form.get('aceptaTerminos');
+  }
+
+  get isTerminosInvalid(): boolean {
+    return !!(this.aceptaTerminos?.touched && this.aceptaTerminos.invalid);
+  }
+
+  get tokenStep2() {
+    return this.step2Form.get('token');
+  }
+
+  get isTokenStep2Invalid(): boolean {
+    return !!(this.tokenStep2?.touched && this.tokenStep2.invalid);
+  }
+
+  irARegistro() {
+    this.pasoActual = 2;
+  }
+
+  irALogin() {
+    this.pasoActual = 1;
+  }
+
+  onLoginSubmit() {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    this.isLoading = true;
+    this.authService.login(this.loginForm.getRawValue()).subscribe({
+      next: async () => {
+        this.isLoading = false;
+        await this.presentToast('Inicio de sesión exitoso.', 'success');
+        await this.router.navigate(['/home']);
+      },
+      error: async (error) => {
+        this.isLoading = false;
+        const message = error?.error?.message || 'Error al iniciar sesión. Verifique sus credenciales.';
+        await this.presentToast(message, 'danger');
+      }
+    });
+  }
+
+  enviarTokenRegistro() {
     if (this.step1Form.invalid) {
       this.step1Form.markAllAsTouched();
       return;
@@ -100,7 +162,7 @@ export class RegistroPage implements OnInit {
     this.emailService.sendToken(email).subscribe({
       next: () => {
         this.isLoading = false;
-        this.pasoActual = 2;
+        this.pasoActual = 3;
         void this.presentToast('El token ha sido enviado exitosamente a tu correo.', 'success');
       },
       error: (error) => {
@@ -111,7 +173,7 @@ export class RegistroPage implements OnInit {
     });
   }
 
-  verificarToken() {
+  verificarTokenOTP() {
     if (this.step2Form.invalid) {
       this.step2Form.markAllAsTouched();
       return;
@@ -125,8 +187,8 @@ export class RegistroPage implements OnInit {
       next: () => {
         this.isLoading = false;
         this.loginForm.patchValue({ email });
-        this.pasoActual = 3;
-        void this.presentToast('Verificación de token realizada correctamente.', 'success');
+        this.pasoActual = 1;
+        void this.presentToast('Cuenta verificada correctamente. Inicie sesión.', 'success');
       },
       error: (error) => {
         this.isLoading = false;
@@ -136,17 +198,4 @@ export class RegistroPage implements OnInit {
     });
   }
 
-  anteriorPaso() {
-    if (this.pasoActual > 1) {
-      this.pasoActual--;
-    }
-  }
-
-  onLoginSubmit() {
-    if (this.loginForm.valid) {
-      void this.presentToast('¡Cuenta creada con éxito!', 'success');
-    } else {
-      this.loginForm.markAllAsTouched();
-    }
-  }
 }
