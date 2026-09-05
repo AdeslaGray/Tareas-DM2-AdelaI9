@@ -1,96 +1,7 @@
 <ion-content class="ion-no-padding">
 
-  <!-- ==================== PASO 1: VERIFICACIÓN DE CORREO ==================== -->
-  <div *ngIf="pasoActual === 1" class="step-container">
-    <div class="green-header">
-      <ion-button fill="clear" color="light" class="back-btn">
-        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
-        Regresar
-      </ion-button>
-    </div>
-
-    <div class="content-body">
-      <span class="greeting">Hola, ¡un placer conocerte!</span>
-      <h1 class="main-title">¡Únase a nuestra empresa!</h1>
-
-      <form [formGroup]="step1Form" (ngSubmit)="enviarToken()">
-        <div class="input-card" [class.field-error-card]="isFieldInvalid(step1Form, 'email')">
-          <ion-input 
-            type="email" 
-            formControlName="email" 
-            placeholder="Introduce tu correo electrónico">
-          </ion-input>
-        </div>
-
-        <div *ngIf="isFieldInvalid(step1Form, 'email')" class="error-msg">
-          <span *ngIf="step1Form.get('email')?.hasError('required')">El correo es requerido.</span>
-          <span *ngIf="step1Form.get('email')?.hasError('email')">Ingrese un correo electrónico válido.</span>
-        </div>
-
-        <p class="terms-text">
-          Al crear una cuenta, aceptas nuestros <br>
-          <strong>Términos de servicio</strong> y <strong>Política de privacidad.</strong>
-        </p>
-
-        <ion-button 
-          expand="block" 
-          type="submit"
-          class="action-btn"
-          [disabled]="step1Form.invalid || isLoading">
-          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
-          <span *ngIf="!isLoading">Continuar</span>
-          <ion-icon *ngIf="!isLoading" name="arrow-forward-outline" slot="end"></ion-icon>
-        </ion-button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ==================== PASO 2: VALIDACIÓN DE TOKEN (OTP) ==================== -->
-  <div *ngIf="pasoActual === 2" class="step-container">
-    <div class="green-header">
-      <ion-button fill="clear" color="light" class="back-btn" (click)="anteriorPaso()">
-        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
-        Regresar
-      </ion-button>
-    </div>
-
-    <div class="content-body">
-      <span class="sub-header-text">Verificación de correo electrónico</span>
-      <h1 class="main-title">Ingrese su código OTP</h1>
-      
-      <p class="desc-text">
-        Introduzca el código de 6 dígitos que le enviamos por correo electrónico. 
-        <span class="green-link" (click)="anteriorPaso()">¿Está correcta tu dirección?</span>
-      </p>
-
-      <form [formGroup]="step2Form" (ngSubmit)="verificarToken()">
-        <div class="otp-boxes" [class.field-error-card]="isFieldInvalid(step2Form, 'token')">
-          <ion-input 
-            type="text" 
-            maxlength="6" 
-            formControlName="token" 
-            class="otp-input"
-            placeholder="123456">
-          </ion-input>
-        </div>
-
-        <div *ngIf="isFieldInvalid(step2Form, 'token')" class="error-msg">
-          El token debe ser de 6 dígitos.
-        </div>
-
-        <div class="resend-row">
-          <span class="resend-text">Reenviar código en <strong class="green-text">10 segundos</strong></span>
-          <ion-button type="submit" class="circle-next-btn" [disabled]="step2Form.invalid || isLoading">
-            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
-            <ion-icon *ngIf="!isLoading" name="arrow-forward-outline"></ion-icon>
-          </ion-button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ==================== PASO 3: LOGIN ==================== -->
-  <div *ngIf="pasoActual === 3" class="login-container">
+  <!-- ==================== VISTA 1: LOGIN ==================== -->
+  <div *ngIf="pasoActual === 1" class="login-container">
     <div class="login-header-illustration">
       <span class="brand-text">Tap'nPay</span>
       <div class="shield-badge">
@@ -101,26 +12,26 @@
     <div class="login-body">
       <h2 class="login-title">Inicio de Sesión</h2>
       <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
-        <div class="form-group" [class.field-error]="isFieldInvalid(loginForm, 'email')">
+        <div class="form-group" [class.field-error]="isEmailLoginInvalid">
           <label class="field-label">Correo electrónico</label>
           <div class="custom-card-input">
             <ion-input type="email" formControlName="email" placeholder="Ingrese su correo"></ion-input>
           </div>
-          <div *ngIf="isFieldInvalid(loginForm, 'email')" class="error-msg">
-            <span *ngIf="loginForm.get('email')?.hasError('required')">* El correo es requerido.</span>
-            <span *ngIf="loginForm.get('email')?.hasError('email')">* Debe ser un correo electrónico válido.</span>
+          <div *ngIf="isEmailLoginInvalid" class="error-msg">
+            <span *ngIf="emailLogin?.hasError('required')">* El correo es requerido.</span>
+            <span *ngIf="emailLogin?.hasError('email')">* Debe ser un correo electrónico válido.</span>
           </div>
         </div>
 
-        <div class="form-group" [class.field-error]="isFieldInvalid(loginForm, 'password')">
+        <div class="form-group" [class.field-error]="isPasswordLoginInvalid">
           <label class="field-label">Contraseña</label>
           <div class="custom-card-input password-input-wrapper">
             <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Ingrese su contraseña"></ion-input>
             <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" (click)="togglePassword()" class="eye-icon"></ion-icon>
           </div>
-          <div *ngIf="isFieldInvalid(loginForm, 'password')" class="error-msg">
-            <span *ngIf="loginForm.get('password')?.hasError('required')">* La contraseña es requerida.</span>
-            <span *ngIf="loginForm.get('password')?.hasError('minlength') || loginForm.get('password')?.hasError('pattern')">
+          <div *ngIf="isPasswordLoginInvalid" class="error-msg">
+            <span *ngIf="passwordLogin?.hasError('required')">* La contraseña es requerida.</span>
+            <span *ngIf="passwordLogin?.hasError('minlength') || passwordLogin?.hasError('pattern')">
               * La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.
             </span>
           </div>
@@ -130,8 +41,85 @@
           <a class="forgot-pass-link">¿Olvidaste tu contraseña?</a>
         </div>
 
-        <ion-button expand="block" type="submit" class="purple-login-btn" [disabled]="loginForm.invalid">
-          Ingresar
+        <ion-button expand="block" type="submit" class="purple-login-btn" [disabled]="loginForm.invalid || isLoading">
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoading">Ingresar</span>
+        </ion-button>
+
+        <div class="register-redirect">
+          <p>¿No tienes una cuenta? <a class="purple-link" (click)="irARegistro()">Regístrate ahora</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== VISTA 2: REGISTRO ==================== -->
+  <div *ngIf="pasoActual === 2" class="step-container">
+    <div class="green-header">
+      <ion-button fill="clear" color="light" class="back-btn" (click)="irALogin()">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Regresar al Login
+      </ion-button>
+    </div>
+
+    <div class="content-body">
+      <span class="greeting">Hola, ¡un placer conocerte!</span>
+      <h1 class="main-title">¡Únase a nuestra empresa!</h1>
+
+      <form [formGroup]="step1Form" (ngSubmit)="enviarTokenRegistro()">
+        <div class="input-card" [class.field-error-card]="isEmailRegistroInvalid">
+          <ion-input type="email" formControlName="email" placeholder="Introduce tu correo electrónico"></ion-input>
+        </div>
+
+        <div *ngIf="isEmailRegistroInvalid" class="error-msg">
+          <span *ngIf="emailRegistro?.hasError('required')">El correo es requerido.</span>
+          <span *ngIf="emailRegistro?.hasError('email')">Ingrese un correo electrónico válido.</span>
+        </div>
+
+        <div class="terms-checkbox-container">
+          <ion-checkbox formControlName="aceptaTerminos" labelPlacement="end">
+            Acepto los <strong>Términos de servicio</strong> y la <strong>Política de privacidad</strong>.
+          </ion-checkbox>
+        </div>
+
+        <div *ngIf="isTerminosInvalid" class="error-msg">
+          * Debe aceptar los términos y condiciones para continuar.
+        </div>
+
+        <ion-button expand="block" type="submit" class="action-btn" [disabled]="step1Form.invalid || isLoading">
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoading">Unirme y Continuar</span>
+          <ion-icon *ngIf="!isLoading" name="arrow-forward-outline" slot="end"></ion-icon>
+        </ion-button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== VISTA 3: OTP ==================== -->
+  <div *ngIf="pasoActual === 3" class="step-container">
+    <div class="green-header">
+      <ion-button fill="clear" color="light" class="back-btn" (click)="pasoActual = 2">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Regresar
+      </ion-button>
+    </div>
+
+    <div class="content-body">
+      <span class="sub-header-text">Verificación de correo electrónico</span>
+      <h1 class="main-title">Ingrese su código OTP</h1>
+
+      <form [formGroup]="step2Form" (ngSubmit)="verificarTokenOTP()">
+        <div class="otp-boxes" [class.field-error-card]="isTokenStep2Invalid">
+          <ion-input type="text" maxlength="6" formControlName="token" class="otp-input" placeholder="123456"></ion-input>
+        </div>
+
+        <div *ngIf="isTokenStep2Invalid" class="error-msg">
+          El token debe ser de 6 dígitos.
+        </div>
+
+        <ion-button expand="block" type="submit" class="action-btn" [disabled]="step2Form.invalid || isLoading">
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoading">Verificar Cuenta</span>
         </ion-button>
       </form>
     </div>

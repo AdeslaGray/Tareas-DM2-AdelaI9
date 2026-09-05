@@ -5,6 +5,9 @@ import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalo
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getMessaging, provideMessaging } from '@angular/fire/messaging';
+import { environment } from './environments/environment';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -12,5 +15,7 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideHttpClient(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideMessaging(() => getMessaging()),
   ],
 });

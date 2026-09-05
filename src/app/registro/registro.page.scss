@@ -85,50 +85,27 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-.resend-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 30px;
-
-  .resend-text {
-    font-size: 13px;
-    color: #555555;
-  }
-
-  .circle-next-btn {
-    --border-radius: 50%;
-    --padding-start: 0;
-    --padding-end: 0;
-    width: 48px;
-    height: 48px;
-    --background: #d0d7dd;
-    --color: #ffffff;
-
-    &:not([disabled]) {
-      --background: #6ebd45;
-    }
-  }
-}
-
-.terms-text {
-  font-size: 13px;
-  color: #555555;
-  margin-top: 12px;
-  margin-bottom: 28px;
-  line-height: 1.5;
-
-  strong {
-    color: #000000;
-  }
-}
-
 .action-btn {
   --background: #6ebd45;
   --border-radius: 12px;
   height: 50px;
   font-weight: 600;
   text-transform: none;
+}
+
+.terms-checkbox-container {
+  margin: 18px 0;
+
+  ion-checkbox {
+    --color-checked: #6ebd45;
+    --border-color-checked: #6ebd45;
+    font-size: 13px;
+    color: #444444;
+
+    strong {
+      color: #000000;
+    }
+  }
 }
 
 /* ================= PASO 3: LOGIN (Estilo Morado Tap'nPay) ================= */
@@ -253,6 +230,23 @@
       text-transform: none;
       font-size: 15px;
     }
+
+    .register-redirect {
+      text-align: center;
+      margin-top: 20px;
+
+      p {
+        font-size: 13px;
+        color: #666666;
+      }
+
+      .purple-link {
+        color: #6c3ef8;
+        font-weight: 700;
+        cursor: pointer;
+      }
+    }
+
   }
 }
 
