@@ -1,0 +1,42 @@
+<ion-content class="welcome-page" [fullscreen]="true">
+  <div class="welcome-shell">
+    <div class="welcome-topline">
+      <span class="brand-mark"><ion-icon name="car-outline"></ion-icon></span>
+      <span class="brand-name">Taxi Driver</span>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <img class="hero-image" src="assets/welcome-taxi.svg" alt="" />
+      <div class="sun-disc"></div>
+      <div class="road-line road-line-one"></div>
+      <div class="road-line road-line-two"></div>
+      <div class="car-illustration">
+        <div class="car-roof"></div>
+        <div class="car-body"></div>
+        <span class="car-wheel wheel-left"></span>
+        <span class="car-wheel wheel-right"></span>
+      </div>
+    </div>
+
+    <div class="welcome-copy">
+      <span class="eyebrow">TU VIAJE, A TU MANERA</span>
+      <h1>Bienvenido a<br /><strong>Taxi Driver</strong></h1>
+      <p>Conduce, conecta y lleva cada trayecto más lejos.</p>
+    </div>
+
+    <div class="welcome-actions">
+      <ion-button expand="block" class="primary-action" routerLink="/login">
+        Iniciar sesión
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+      <ion-button expand="block" fill="clear" class="secondary-action" routerLink="/login">
+        Crear una cuenta
+      </ion-button>
+    </div>
+
+    <div class="trust-note">
+      <ion-icon name="shield-checkmark-outline"></ion-icon>
+      <span>Una experiencia segura para cada conductor</span>
+    </div>
+  </div>
+</ion-content>

@@ -47,7 +47,10 @@
         </ion-button>
 
         <div class="register-redirect">
-          <p>¿No tienes una cuenta? <a class="purple-link" (click)="irARegistro()">Regístrate ahora</a></p>
+          <p>¿No tienes cuenta?</p>
+          <ion-button type="button" fill="clear" class="register-link-btn" (click)="irARegistro()">
+            Crear cuenta
+          </ion-button>
         </div>
       </form>
     </div>
@@ -120,6 +123,59 @@
         <ion-button expand="block" type="submit" class="action-btn" [disabled]="step2Form.invalid || isLoading">
           <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
           <span *ngIf="!isLoading">Verificar Cuenta</span>
+        </ion-button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== VISTA 4: CONTRASEÑA ==================== -->
+  <div *ngIf="pasoActual === 4" class="step-container">
+    <div class="green-header">
+      <ion-button fill="clear" color="light" class="back-btn" (click)="pasoActual = 3">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Regresar
+      </ion-button>
+    </div>
+
+    <div class="content-body">
+      <span class="sub-header-text">Cuenta verificada</span>
+      <h1 class="main-title">Crea tu contraseña</h1>
+      <p class="desc-text">Usarás esta contraseña para iniciar sesión con tu correo.</p>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="crearCuenta()">
+        <div class="form-group"><label class="field-label">Nombre</label><div class="custom-card-input"><ion-input formControlName="FirstName" placeholder="Tu nombre"></ion-input></div></div>
+        <div class="form-group"><label class="field-label">Apellido</label><div class="custom-card-input"><ion-input formControlName="LastName" placeholder="Tu apellido"></ion-input></div></div>
+        <div class="form-group"><label class="field-label">Teléfono</label><div class="custom-card-input"><ion-input formControlName="Phone" placeholder="Ej. +504 9876-5432"></ion-input></div></div>
+        <div class="form-group"><label class="field-label">Dirección</label><div class="custom-card-input"><ion-input formControlName="Address" placeholder="Ej. Colonia Centro, Tegucigalpa"></ion-input></div></div>
+        <div class="form-group"><label class="field-label">Identidad</label><div class="custom-card-input"><ion-input formControlName="NationalId" placeholder="Ej. 0801199901234"></ion-input></div></div>
+        <div class="form-group"><label class="field-label">Documento</label><div class="custom-card-input"><ion-input formControlName="Documents" placeholder="Ej. licencia-12345"></ion-input></div></div>
+        <div class="form-group"><label class="field-label">Foto de perfil</label><div class="custom-card-input"><ion-input formControlName="ProfilePhoto" placeholder="https://ejemplo.com/foto.jpg"></ion-input></div></div>
+
+        <div class="form-group" [class.field-error]="registerPassword?.touched && registerPassword?.invalid">
+          <label class="field-label">Contraseña</label>
+          <div class="custom-card-input password-input-wrapper">
+            <ion-input [type]="showRegisterPassword ? 'text' : 'password'" formControlName="password" placeholder="Crea una contraseña"></ion-input>
+            <ion-icon [name]="showRegisterPassword ? 'eye-off-outline' : 'eye-outline'" (click)="toggleRegisterPassword()" class="eye-icon"></ion-icon>
+          </div>
+          <div *ngIf="registerPassword?.touched && registerPassword?.invalid" class="error-msg">
+            <span *ngIf="registerPassword?.hasError('required')">La contraseña es requerida.</span>
+            <span *ngIf="registerPassword?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+          </div>
+        </div>
+
+        <div class="form-group" [class.field-error]="registerPasswordConfirmation?.touched && (registerPasswordConfirmation?.invalid || passwordsDoNotMatch)">
+          <label class="field-label">Confirmar contraseña</label>
+          <div class="custom-card-input password-input-wrapper">
+            <ion-input [type]="showRegisterPasswordConfirmation ? 'text' : 'password'" formControlName="passwordConfirmation" placeholder="Repite tu contraseña"></ion-input>
+            <ion-icon [name]="showRegisterPasswordConfirmation ? 'eye-off-outline' : 'eye-outline'" (click)="toggleRegisterPasswordConfirmation()" class="eye-icon"></ion-icon>
+          </div>
+          <div *ngIf="registerPasswordConfirmation?.touched && registerPasswordConfirmation?.hasError('required')" class="error-msg">La confirmación de la contraseña es requerida.</div>
+          <div *ngIf="passwordsDoNotMatch" class="error-msg">Las contraseñas no coinciden.</div>
+        </div>
+
+        <ion-button expand="block" type="submit" class="action-btn" [disabled]="passwordForm.invalid || isLoading">
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoading">Crear cuenta</span>
         </ion-button>
       </form>
     </div>
