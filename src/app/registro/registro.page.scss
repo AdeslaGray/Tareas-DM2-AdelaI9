@@ -1,6 +1,6 @@
 /* ================= Pasos 1 y 2 ================= */
 .green-header {
-  background-color: #6ebd45;
+  background-color: #0f766e;
   height: 180px;
   border-bottom-left-radius: 50% 35px;
   border-bottom-right-radius: 50% 35px;
@@ -32,7 +32,7 @@
     font-size: 24px;
     font-weight: 800;
     color: #111111;
-    margin: 4px 0 16px 0;
+    margin: 4px 0 16px;
   }
 
   .desc-text {
@@ -42,22 +42,13 @@
     margin-bottom: 24px;
   }
 
-  .green-link {
-    color: #6ebd45;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .green-text {
-    color: #6ebd45;
-  }
 }
 
 .input-card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 12px;
   border: 1.5px solid #e2e8ed;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.04);
+    box-shadow: 0px 4px 15px #0000000a;
   padding: 4px 12px;
   margin-bottom: 8px;
 
@@ -86,7 +77,7 @@
 }
 
 .action-btn {
-  --background: #6ebd45;
+  --background: #0f766e;
   --border-radius: 12px;
   height: 50px;
   font-weight: 600;
@@ -97,13 +88,13 @@
   margin: 18px 0;
 
   ion-checkbox {
-    --color-checked: #6ebd45;
-    --border-color-checked: #6ebd45;
+    --color-checked: #0f766e;
+    --border-color-checked: #0f766e;
     font-size: 13px;
     color: #444444;
 
     strong {
-      color: #000000;
+      color: #0f172a;
     }
   }
 }
@@ -111,12 +102,12 @@
 /* ================= PASO 3: LOGIN (Estilo Morado Tap'nPay) ================= */
 .login-container {
   min-height: 100vh;
-  background: #ffffff;
+  background: #f8fafc;
   display: flex;
   flex-direction: column;
 
   .login-header-illustration {
-    background: #f4f3ff;
+    background: #e6fffb;
     height: 280px;
     display: flex;
     flex-direction: column;
@@ -125,7 +116,7 @@
     padding-top: 20px;
 
     .brand-text {
-      color: #5f33e1;
+      color: #115e59;
       font-weight: 800;
       font-size: 18px;
       margin-bottom: 20px;
@@ -135,7 +126,7 @@
       width: 110px;
       height: 130px;
       background: #ffffff;
-      border: 3px solid #6c3ef8;
+      border: 3px solid #0f766e;
       border-radius: 20px 20px 50px 50px;
       display: flex;
       align-items: center;
@@ -144,7 +135,7 @@
 
       ion-icon {
         font-size: 55px;
-        color: #6c3ef8;
+        color: #0f766e;
       }
     }
   }
@@ -156,7 +147,7 @@
     .login-title {
       font-size: 20px;
       font-weight: 800;
-      color: #111111;
+      color: #0f172a;
       margin-bottom: 24px;
     }
 
@@ -215,7 +206,7 @@
       margin-bottom: 28px;
 
       .forgot-pass-link {
-        color: #6c3ef8;
+        color: #0f766e;
         font-size: 12px;
         font-weight: 700;
         text-decoration: none;
@@ -223,7 +214,7 @@
     }
 
     .purple-login-btn {
-      --background: #6c3ef8;
+      --background: #0f766e;
       --border-radius: 12px;
       height: 48px;
       font-weight: 700;
@@ -241,7 +232,7 @@
       }
 
       .purple-link {
-        color: #6c3ef8;
+        color: #0f766e;
         font-weight: 700;
         cursor: pointer;
       }

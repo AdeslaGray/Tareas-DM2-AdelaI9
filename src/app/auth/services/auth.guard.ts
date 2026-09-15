@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 export const authGuard: CanActivateFn = async () => {
   const authService = inject(AuthService);
@@ -12,10 +12,6 @@ export const authGuard: CanActivateFn = async () => {
     return true;
   }
 
-  await router.navigate(['/registro']);
+  await router.navigate(['/login']);
   return false;
 };
-
-export class AuthGuard {
-  static canActivate = authGuard;
-}

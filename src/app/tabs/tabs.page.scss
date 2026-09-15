@@ -1,0 +1,23 @@
+.custom-tab-bar {
+  --background: #ffffff;
+  --border-color: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+  height: 64px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+
+  ion-tab-button {
+    --color: #64748b;
+    --color-selected: #22c55e;
+    transition: all 0.2s ease-in-out;
+
+    ion-icon {
+      font-size: 24px;
+    }
+
+    ion-label {
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+  }
+}
