@@ -34,3 +34,30 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
+
+/* Keep the mobile app aligned with the light visual design on dark-mode devices. */
+:root {
+	color-scheme: light;
+	--ion-background-color: #f8fafc;
+	--ion-text-color: #0f172a;
+	--ion-item-background: #ffffff;
+}
+
+html,
+body,
+ion-app {
+	background: #f8fafc;
+	color: #0f172a;
+}
+
+ion-input,
+ion-checkbox,
+ion-button {
+	--color: #0f172a;
+}
+
+ion-input {
+	--background: #ffffff;
+	--color: #0f172a;
+	--placeholder-color: #94a3b8;
+}

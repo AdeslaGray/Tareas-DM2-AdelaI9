@@ -14,8 +14,8 @@
       <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
         <div class="form-group" [class.field-error]="isEmailLoginInvalid">
           <label class="field-label">Correo electrónico</label>
-          <div class="custom-card-input">
-            <ion-input type="email" formControlName="email" placeholder="Ingrese su correo"></ion-input>
+          <div class="custom-card-input" (click)="focusLoginEmail()">
+            <ion-input #loginEmailInput type="email" inputmode="email" autocomplete="email" formControlName="email" placeholder="Ingrese su correo"></ion-input>
           </div>
           <div *ngIf="isEmailLoginInvalid" class="error-msg">
             <span *ngIf="emailLogin?.hasError('required')">* El correo es requerido.</span>
@@ -70,8 +70,8 @@
       <h1 class="main-title">¡Únase a nuestra empresa!</h1>
 
       <form [formGroup]="step1Form" (ngSubmit)="enviarTokenRegistro()">
-        <div class="input-card" [class.field-error-card]="isEmailRegistroInvalid">
-          <ion-input type="email" formControlName="email" placeholder="Introduce tu correo electrónico"></ion-input>
+        <div class="input-card" [class.field-error-card]="isEmailRegistroInvalid" (click)="focusRegistroEmail()">
+          <ion-input #registroEmailInput type="email" inputmode="email" autocomplete="email" formControlName="email" placeholder="Introduce tu correo electrónico"></ion-input>
         </div>
 
         <div *ngIf="isEmailRegistroInvalid" class="error-msg">
@@ -79,10 +79,9 @@
           <span *ngIf="emailRegistro?.hasError('email')">Ingrese un correo electrónico válido.</span>
         </div>
 
-        <div class="terms-checkbox-container">
-          <ion-checkbox formControlName="aceptaTerminos" labelPlacement="end">
-            Acepto los <strong>Términos de servicio</strong> y la <strong>Política de privacidad</strong>.
-          </ion-checkbox>
+        <div class="terms-checkbox-container" role="button" tabindex="0" (click)="toggleTerms()" (keydown.enter)="toggleTerms()">
+          <ion-checkbox formControlName="aceptaTerminos" aria-label="Aceptar términos" (click)="$event.stopPropagation()"></ion-checkbox>
+          <span>Acepto los <strong>Términos de servicio</strong> y la <strong>Política de privacidad</strong>.</span>
         </div>
 
         <div *ngIf="isTerminosInvalid" class="error-msg">
@@ -160,44 +159,42 @@
             <label>Nombre</label>
             <ion-input type="text" formControlName="FirstName" placeholder="Tu nombre"></ion-input>
           </div>
-
           <div class="input-field">
             <label>Apellido</label>
             <ion-input type="text" formControlName="LastName" placeholder="Tu apellido"></ion-input>
           </div>
-
           <div class="input-field">
             <label>Teléfono</label>
             <ion-input type="tel" formControlName="Phone" placeholder="Ej. +504 9876-5432"></ion-input>
           </div>
-
           <div class="input-field">
             <label>Dirección</label>
             <ion-input type="text" formControlName="Address" placeholder="Ej. Colonia Centro, Tegucigalpa"></ion-input>
           </div>
-
           <div class="input-field">
             <label>Identidad</label>
             <ion-input type="text" formControlName="NationalId" placeholder="Ej. 0801199901234"></ion-input>
           </div>
-
-          <div class="input-field">
+          <div class="input-field" [class.field-error]="registerPassword?.touched && registerPassword?.invalid">
             <label>Contraseña</label>
             <div class="password-wrapper">
               <ion-input [type]="showRegisterPassword ? 'text' : 'password'" formControlName="password" placeholder="Crea una contraseña"></ion-input>
               <ion-icon [name]="showRegisterPassword ? 'eye-off-outline' : 'eye-outline'" (click)="toggleRegisterPassword()"></ion-icon>
             </div>
+            <div *ngIf="registerPassword?.touched && registerPassword?.invalid" class="error-msg">
+              <span *ngIf="registerPassword?.hasError('required')">La contraseña es requerida.</span>
+              <span *ngIf="registerPassword?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+            </div>
           </div>
-
-          <div class="input-field">
+          <div class="input-field" [class.field-error]="registerPasswordConfirmation?.touched && (registerPasswordConfirmation?.invalid || passwordsDoNotMatch)">
             <label>Confirmar contraseña</label>
             <div class="password-wrapper">
               <ion-input [type]="showRegisterPasswordConfirmation ? 'text' : 'password'" formControlName="passwordConfirmation" placeholder="Repite tu contraseña"></ion-input>
               <ion-icon [name]="showRegisterPasswordConfirmation ? 'eye-off-outline' : 'eye-outline'" (click)="toggleRegisterPasswordConfirmation()"></ion-icon>
             </div>
+            <div *ngIf="registerPasswordConfirmation?.touched && registerPasswordConfirmation?.hasError('required')" class="error-msg">La confirmación de la contraseña es requerida.</div>
+            <div *ngIf="passwordsDoNotMatch" class="error-msg">Las contraseñas no coinciden.</div>
           </div>
-
-          <div *ngIf="passwordsDoNotMatch" class="error-msg">Las contraseñas no coinciden.</div>
 
           <ion-button expand="block" class="green-action-btn" type="button" (click)="setTab('documentos')">
             Continuar a Documentos
