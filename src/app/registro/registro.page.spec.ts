@@ -31,6 +31,11 @@ describe('RegistroPage', () => {
     component.passwordForm.setValue({
       FirstName: 'Ana',
       LastName: 'García',
+      Phone: '8888-1234',
+      Address: 'Calle 1',
+      NationalId: '1234567',
+      Documents: '',
+      ProfilePhoto: '',
       password: 'abc',
       passwordConfirmation: 'abc'
     });
@@ -55,5 +60,31 @@ describe('RegistroPage', () => {
     expect(component.passwordForm.contains('ProfilePhoto')).toBeTrue();
     expect(component.passwordForm.contains('password')).toBeTrue();
     expect(component.passwordForm.contains('passwordConfirmation')).toBeTrue();
+  });
+
+  it('should build a valid registration payload without empty document URLs', () => {
+    component.step1Form.patchValue({ email: 'test@example.com' });
+    component.passwordForm.patchValue({
+      FirstName: 'Ana',
+      LastName: 'García',
+      Phone: '8888-1234',
+      Address: 'Calle 1',
+      NationalId: '1234567',
+      password: 'Abcdef12',
+      passwordConfirmation: 'Abcdef12'
+    });
+
+    component.profilePhotoUrl = '';
+    component.licenciaUrl = '';
+    component.revisionUrl = 'https://example.com/revision.pdf';
+
+    const payload = component.buildRegisterPayload();
+
+    expect(payload.profilePhoto).toContain('ui-avatars.com');
+    expect(payload.documents.length).toBe(2);
+    expect(payload.documents[0].type).toBe('Licencia');
+    expect(payload.documents[0].url).toContain('placehold.co');
+    expect(payload.documents[1].type).toBe('Revisión Vehicular');
+    expect(payload.documents[1].url).toBe('https://example.com/revision.pdf');
   });
 });
