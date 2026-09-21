@@ -299,7 +299,7 @@ export class RegistroPage implements OnInit {
         await this.presentToast('Inicio de sesión exitoso.', 'success');
         await this.router.navigate(['/tabs/rides']);
       },
-      error: async (error) => {
+      error: async (error: any) => {
         this.isLoading = false;
         const message = error?.status === 401
           ? 'Correo o contraseña incorrectos.'
@@ -328,7 +328,7 @@ export class RegistroPage implements OnInit {
         this.pasoActual = 3;
         void this.presentToast('El token ha sido enviado exitosamente a tu correo.', 'success');
       },
-      error: (error) => {
+      error: (error: any) => {
         this.isLoading = false;
         const message = error?.status === 409
           ? 'Este correo ya tiene un registro pendiente o ya está registrado. Usa otro correo o inicia sesión.'
@@ -354,7 +354,7 @@ export class RegistroPage implements OnInit {
         this.pasoActual = 4;
         void this.presentToast('Correo verificado. Crea tu contraseña.', 'success');
       },
-      error: (error) => {
+      error: (error: any) => {
         this.isLoading = false;
         const message = error?.error?.message || 'Ocurrió un error al verificar el token.';
         void this.presentToast(message, 'danger');

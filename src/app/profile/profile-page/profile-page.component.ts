@@ -19,6 +19,7 @@ import {
   phonePortraitOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../../services/auth.service';
+import { CloudinaryService } from '../../services/cloudinary.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -37,6 +38,7 @@ export class ProfilePageComponent implements OnInit {
     private authService: AuthService,
     private toastCtrl: ToastController,
     private router: Router,
+    private cloudinaryService: CloudinaryService,
   ) {
     addIcons({ cardOutline, cameraOutline, checkmarkCircle, locationOutline, lockClosedOutline, logOutOutline, mailOutline, peopleOutline, personOutline, phonePortraitOutline });
   }
@@ -77,11 +79,22 @@ export class ProfilePageComponent implements OnInit {
 
   async changeProfilePhoto(): Promise<void> {
     try {
-      const image = await Camera.getPhoto({ quality: 90, allowEditing: true, resultType: CameraResultType.Uri, source: CameraSource.Prompt });
-      if (image.webPath) {
-        this.userProfileImage = image.webPath;
-        await Preferences.set({ key: 'imageProfile', value: image.webPath });
-        await this.presentToast('Foto de perfil actualizada.', 'success');
+      const image = await Camera.getPhoto({ quality: 90, allowEditing: true, resultType: CameraResultType.Base64, source: CameraSource.Prompt });
+      if (image.base64String) {
+        this.isSubmitting = true;
+        this.cloudinaryService.uploadImage(image.base64String).subscribe({
+          next: async (url: string) => {
+            this.userProfileImage = url;
+            await Preferences.set({ key: 'imageProfile', value: url });
+            this.isSubmitting = false;
+            await this.presentToast('Foto de perfil actualizada y subida a la nube.', 'success');
+          },
+          error: async (error: any) => {
+            this.isSubmitting = false;
+            const message = error?.message || 'No se pudo subir la imagen al servidor.';
+            await this.presentToast(message, 'danger');
+          }
+        });
       }
     } catch {
       console.log('Captura cancelada o no disponible.');

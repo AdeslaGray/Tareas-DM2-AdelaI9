@@ -12,20 +12,27 @@ export class CloudinaryService {
 
   constructor(private http: HttpClient) {}
 
-  uploadImage(base64Image: string): Observable<string> {
-    const url = `https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`;
-    const cleanBase64 = this.stripDataPrefix(base64Image);
-    const contentType = this.detectContentType(base64Image);
+  /**
+   * Sube cualquier archivo (imagen, PDF, doc, etc.) a Cloudinary.
+   * Acepta base64 con o sin prefijo data URI.
+   */
+  uploadFile(base64Data: string, fileName?: string): Observable<string> {
+    const contentType = this.detectContentType(base64Data);
+    const resourceType = this.getResourceType(contentType);
+    const url = `https://api.cloudinary.com/v1_1/${this.cloudName}/${resourceType}/upload`;
+
+    const cleanBase64 = this.stripDataPrefix(base64Data);
     const byteCharacters = atob(cleanBase64);
-    const byteNumbers = new Array(byteCharacters.length);
+    const byteNumbers = new Uint8Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: contentType });
-    const fileName = `upload-${Date.now()}.${this.getExtension(contentType)}`;
+
+    const blob = new Blob([byteNumbers], { type: contentType });
+    const resolvedFileName = fileName ?? `upload-${Date.now()}.${this.getExtension(contentType)}`;
+
     const formData = new FormData();
-    formData.append('file', blob, fileName);
+    formData.append('file', blob, resolvedFileName);
     formData.append('upload_preset', this.uploadPreset);
 
     return this.http.post<any>(url, formData).pipe(
@@ -33,39 +40,55 @@ export class CloudinaryService {
     );
   }
 
+  /** Alias para compatibilidad con el código existente que usa uploadImage() */
+  uploadImage(base64Image: string): Observable<string> {
+    return this.uploadFile(base64Image);
+  }
+
+  // ─── Helpers ───────────────────────────────────────────────────────────────
+
   private stripDataPrefix(base64: string): string {
-    if (!base64) {
-      return '';
-    }
-    const prefixIndex = base64.indexOf(',');
-    return prefixIndex !== -1 ? base64.substring(prefixIndex + 1) : base64;
+    if (!base64) return '';
+    const idx = base64.indexOf(',');
+    return idx !== -1 ? base64.substring(idx + 1) : base64;
   }
 
   private detectContentType(base64: string): string {
-    if (!base64) {
-      return 'image/jpeg';
-    }
-    if (base64.startsWith('data:image/png')) {
-      return 'image/png';
-    }
-    if (base64.startsWith('data:image/webp')) {
-      return 'image/webp';
-    }
-    if (base64.startsWith('data:image/')) {
-      const match = base64.match(/data:(image\/[a-zA-Z0-9+.-]+);base64/);
-      return match ? match[1] : 'image/jpeg';
-    }
-    return 'image/jpeg';
+    if (!base64) return 'application/octet-stream';
+
+    const match = base64.match(/^data:([a-zA-Z0-9+\-./]+);base64/);
+    if (match) return match[1];
+
+    // Sin prefijo → intentar detectar por magic bytes (primeros chars en base64)
+    if (base64.startsWith('JVBERi0')) return 'application/pdf';  // %PDF-
+    if (base64.startsWith('iVBORw')) return 'image/png';
+    if (base64.startsWith('/9j/'))   return 'image/jpeg';
+    if (base64.startsWith('UEsD'))   return 'application/zip';   // ZIP / DOCX / XLSX
+
+    return 'application/octet-stream';
+  }
+
+  /**
+   * Cloudinary distingue entre 'image', 'video' y 'raw' (cualquier otro).
+   * PDFs y docs deben subirse como 'raw'.
+   */
+  private getResourceType(contentType: string): 'image' | 'video' | 'raw' {
+    if (contentType.startsWith('image/')) return 'image';
+    if (contentType.startsWith('video/')) return 'video';
+    return 'raw'; // PDF, DOC, ZIP, etc.
   }
 
   private getExtension(contentType: string): string {
-    switch (contentType) {
-      case 'image/png':
-        return 'png';
-      case 'image/webp':
-        return 'webp';
-      default:
-        return 'jpg';
-    }
+    const map: Record<string, string> = {
+      'image/jpeg':       'jpg',
+      'image/png':        'png',
+      'image/webp':       'webp',
+      'image/gif':        'gif',
+      'application/pdf':  'pdf',
+      'application/zip':  'zip',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':       'xlsx',
+    };
+    return map[contentType] ?? 'bin';
   }
 }
