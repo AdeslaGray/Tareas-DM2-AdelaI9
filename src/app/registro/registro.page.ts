@@ -12,7 +12,7 @@ import {
   cameraOutline,
   cardOutline,
   documentTextOutline,
-  eyeOutline, 
+  eyeOutline,
   eyeOffOutline,
   shieldCheckmarkOutline
 } from 'ionicons/icons';
@@ -40,6 +40,7 @@ export class RegistroPage implements OnInit {
   readonly CameraSource = CameraSource;
   @ViewChild('loginEmailInput') loginEmailInput?: IonInput;
   @ViewChild('registroEmailInput') registroEmailInput?: IonInput;
+
   pasoActual: number = 1;
   showPassword: boolean = false;
   isLoading: boolean = false;
@@ -138,9 +139,11 @@ export class RegistroPage implements OnInit {
         resultType: CameraResultType.Base64,
         source,
       });
+
       if (!image.base64String) {
         return;
       }
+
       this.isLoading = true;
       this.cloudinaryService.uploadImage(image.base64String).subscribe({
         next: (url: string) => {
@@ -201,10 +204,12 @@ export class RegistroPage implements OnInit {
     const firstName = (this.passwordForm.get('FirstName')?.value ?? '').trim();
     const lastName = (this.passwordForm.get('LastName')?.value ?? '').trim();
     const profileName = firstName || lastName ? `${firstName} ${lastName}`.trim() : 'Usuario';
+
     const documents = [
       { type: 'Licencia', url: this.licenciaUrl || this.pendingDocumentUrl },
       { type: 'Revisión Vehicular', url: this.revisionUrl || this.pendingDocumentUrl },
     ];
+
     return {
       email: (this.step1Form.get('email')?.value ?? '').trim(),
       password: (this.registerPassword?.value ?? '').toString(),

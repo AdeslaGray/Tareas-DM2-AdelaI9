@@ -1,0 +1,58 @@
+<ion-content class="bg-profile ion-padding-horizontal">
+  <div class="profile-header">
+    <h1 class="main-title">Perfil</h1>
+    <div class="avatar-container" (click)="changeProfilePhoto()">
+      <div class="avatar-ring">
+        <ion-img [src]="userProfileImage" alt="Foto de perfil" class="avatar-img"></ion-img>
+        <div class="check-badge"><ion-icon name="checkmark-circle"></ion-icon></div>
+      </div>
+    </div>
+    <h2 class="user-display-name">{{ firstNameControl?.value }} {{ lastNameControl?.value }}</h2>
+    <span class="user-joined">Perfil del conductor</span>
+  </div>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()" class="profile-form">
+    <div class="form-field-card" [class.border-error]="isFirstNameInvalid">
+      <div class="icon-avatar purple"><ion-icon name="person-outline"></ion-icon></div>
+      <div class="field-content"><label>Nombre(s)</label><ion-input type="text" formControlName="firstName"></ion-input></div>
+    </div>
+
+    <div class="form-field-card" [class.border-error]="isLastNameInvalid">
+      <div class="icon-avatar purple"><ion-icon name="people-outline"></ion-icon></div>
+      <div class="field-content"><label>Apellidos</label><ion-input type="text" formControlName="lastName"></ion-input></div>
+    </div>
+
+    <div class="form-field-card disabled">
+      <div class="icon-avatar yellow"><ion-icon name="card-outline"></ion-icon></div>
+      <div class="field-content"><label>Número de identidad</label><ion-input type="text" formControlName="nationalId"></ion-input></div>
+    </div>
+
+    <div class="form-field-card disabled">
+      <div class="icon-avatar green-light"><ion-icon name="phone-portrait-outline"></ion-icon></div>
+      <div class="field-content"><label>Número de teléfono</label><ion-input type="text" formControlName="phone"></ion-input></div>
+    </div>
+
+    <div class="form-field-card disabled">
+      <div class="icon-avatar green-light"><ion-icon name="mail-outline"></ion-icon></div>
+      <div class="field-content">
+        <div class="label-row"><label>Correo electrónico</label><span class="locked-badge"><ion-icon name="lock-closed-outline"></ion-icon> Bloqueado</span></div>
+        <ion-input type="email" formControlName="email"></ion-input>
+      </div>
+    </div>
+
+    <div class="form-field-card" [class.border-error]="isAddressInvalid">
+      <div class="icon-avatar yellow"><ion-icon name="location-outline"></ion-icon></div>
+      <div class="field-content"><label>Dirección de residencia</label><ion-input type="text" formControlName="address"></ion-input></div>
+    </div>
+
+    <ion-button expand="block" type="submit" class="save-btn" [disabled]="profileForm.invalid || isSubmitting">
+      <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+      <span *ngIf="!isSubmitting">Guardar cambios</span>
+    </ion-button>
+
+    <ion-button expand="block" fill="outline" color="danger" class="logout-btn" type="button" (click)="onLogout()">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Cerrar sesión
+    </ion-button>
+  </form>
+</ion-content>

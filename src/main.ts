@@ -15,7 +15,7 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideHttpClient(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirebaseApp(() => initializeApp(environment.FIREBASE_CONFIG)),
     provideMessaging(() => getMessaging()),
   ],
 });
