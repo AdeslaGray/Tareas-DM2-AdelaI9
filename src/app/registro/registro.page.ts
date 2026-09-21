@@ -22,12 +22,8 @@ import { AuthService } from '../services/auth.service';
   imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class RegistroPage implements OnInit {
-<<<<<<< Updated upstream
-=======
   @ViewChild('loginEmailInput') loginEmailInput?: IonInput;
   @ViewChild('registroEmailInput') registroEmailInput?: IonInput;
-  readonly CameraSource = CameraSource;
->>>>>>> Stashed changes
   pasoActual: number = 1;
   showPassword: boolean = false;
   isLoading: boolean = false;
@@ -102,8 +98,10 @@ export class RegistroPage implements OnInit {
     this.showRegisterPassword = !this.showRegisterPassword;
   }
 
-<<<<<<< Updated upstream
-=======
+  toggleRegisterPasswordConfirmation(): void {
+    this.showRegisterPasswordConfirmation = !this.showRegisterPasswordConfirmation;
+  }
+
   async focusLoginEmail(): Promise<void> {
     await this.loginEmailInput?.setFocus();
   }
@@ -116,52 +114,6 @@ export class RegistroPage implements OnInit {
     const control = this.step1Form.get('aceptaTerminos');
     control?.setValue(!control.value);
     control?.markAsTouched();
-  }
-
-  async tomarFoto(tipo: 'profile' | 'licencia' | 'revision', source: CameraSource = CameraSource.Prompt) {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 80,
-        allowEditing: false,
-        resultType: CameraResultType.Base64,
-        source,
-      });
-
-      if (!image.base64String) {
-        return;
-      }
-
-      this.isLoading = true;
-      this.cloudinaryService.uploadImage(image.base64String).subscribe({
-        next: (url) => {
-          this.isLoading = false;
-
-          if (tipo === 'profile') {
-            this.profilePhotoUrl = url;
-          }
-          if (tipo === 'licencia') {
-            this.licenciaUrl = url;
-          }
-          if (tipo === 'revision') {
-            this.revisionUrl = url;
-          }
-
-          void this.presentToast('Imagen subida correctamente a Cloudinary.', 'success');
-        },
-        error: (error) => {
-          this.isLoading = false;
-          const message = error?.message || 'No se pudo subir la imagen al servicio de Cloudinary.';
-          void this.presentToast(message, 'danger');
-        }
-      });
-    } catch (error) {
-      console.log('Captura cancelada o no disponible', error);
-    }
-  }
-
->>>>>>> Stashed changes
-  toggleRegisterPasswordConfirmation() {
-    this.showRegisterPasswordConfirmation = !this.showRegisterPasswordConfirmation;
   }
 
   get registerPassword() {
