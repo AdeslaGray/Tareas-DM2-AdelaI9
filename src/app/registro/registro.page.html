@@ -127,56 +127,138 @@
     </div>
   </div>
 
-  <!-- ==================== VISTA 4: CONTRASEÑA ==================== -->
+  <!-- ==================== VISTA 4: REGISTRO DE CONDUCTOR ==================== -->
   <div *ngIf="pasoActual === 4" class="step-container">
-    <div class="green-header">
+    <div class="green-header-curve">
       <ion-button fill="clear" color="light" class="back-btn" (click)="pasoActual = 3">
         <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
         Regresar
       </ion-button>
+      <div class="avatar-wrapper" (click)="tomarFoto('profile')">
+        <img [src]="profilePhotoUrl || defaultProfilePhotoUrl" class="profile-img" />
+        <div class="camera-badge">
+          <ion-icon name="camera-outline"></ion-icon>
+        </div>
+      </div>
     </div>
 
-    <div class="content-body">
-      <span class="sub-header-text">Cuenta verificada</span>
-      <h1 class="main-title">Crea tu contraseña</h1>
-      <p class="desc-text">Usarás esta contraseña para iniciar sesión con tu correo.</p>
+    <div class="content-body registrations-body">
+      <div class="tab-selector">
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'datos'" (click)="setTab('datos')">
+          Datos
+        </button>
+        <button type="button" class="tab-btn" [class.active]="activeTab === 'documentos'" (click)="setTab('documentos')">
+          Documentos <span *ngIf="licenciaUrl && revisionUrl" class="dot-ok">•</span>
+        </button>
+      </div>
 
-      <form [formGroup]="passwordForm" (ngSubmit)="crearCuenta()">
-        <div class="form-group"><label class="field-label">Nombre</label><div class="custom-card-input"><ion-input formControlName="FirstName" placeholder="Tu nombre"></ion-input></div></div>
-        <div class="form-group"><label class="field-label">Apellido</label><div class="custom-card-input"><ion-input formControlName="LastName" placeholder="Tu apellido"></ion-input></div></div>
-        <div class="form-group"><label class="field-label">Teléfono</label><div class="custom-card-input"><ion-input formControlName="Phone" placeholder="Ej. +504 9876-5432"></ion-input></div></div>
-        <div class="form-group"><label class="field-label">Dirección</label><div class="custom-card-input"><ion-input formControlName="Address" placeholder="Ej. Colonia Centro, Tegucigalpa"></ion-input></div></div>
-        <div class="form-group"><label class="field-label">Identidad</label><div class="custom-card-input"><ion-input formControlName="NationalId" placeholder="Ej. 0801199901234"></ion-input></div></div>
-        <div class="form-group"><label class="field-label">Documento</label><div class="custom-card-input"><ion-input formControlName="Documents" placeholder="Ej. licencia-12345"></ion-input></div></div>
-        <div class="form-group"><label class="field-label">Foto de perfil</label><div class="custom-card-input"><ion-input formControlName="ProfilePhoto" placeholder="https://ejemplo.com/foto.jpg"></ion-input></div></div>
-
-        <div class="form-group" [class.field-error]="registerPassword?.touched && registerPassword?.invalid">
-          <label class="field-label">Contraseña</label>
-          <div class="custom-card-input password-input-wrapper">
-            <ion-input [type]="showRegisterPassword ? 'text' : 'password'" formControlName="password" placeholder="Crea una contraseña"></ion-input>
-            <ion-icon [name]="showRegisterPassword ? 'eye-off-outline' : 'eye-outline'" (click)="toggleRegisterPassword()" class="eye-icon"></ion-icon>
+      <div *ngIf="activeTab === 'datos'" class="form-container">
+        <form [formGroup]="passwordForm" (ngSubmit)="crearCuenta()">
+          <div class="input-field">
+            <label>Nombre</label>
+            <ion-input type="text" formControlName="FirstName" placeholder="Tu nombre"></ion-input>
           </div>
-          <div *ngIf="registerPassword?.touched && registerPassword?.invalid" class="error-msg">
-            <span *ngIf="registerPassword?.hasError('required')">La contraseña es requerida.</span>
-            <span *ngIf="registerPassword?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+          <div class="input-field">
+            <label>Apellido</label>
+            <ion-input type="text" formControlName="LastName" placeholder="Tu apellido"></ion-input>
+          </div>
+          <div class="input-field">
+            <label>Teléfono</label>
+            <ion-input type="tel" formControlName="Phone" placeholder="Ej. +504 9876-5432"></ion-input>
+          </div>
+          <div class="input-field">
+            <label>Dirección</label>
+            <ion-input type="text" formControlName="Address" placeholder="Ej. Colonia Centro, Tegucigalpa"></ion-input>
+          </div>
+          <div class="input-field">
+            <label>Identidad</label>
+            <ion-input type="text" formControlName="NationalId" placeholder="Ej. 0801199901234"></ion-input>
+          </div>
+          <div class="input-field" [class.field-error]="registerPassword?.touched && registerPassword?.invalid">
+            <label>Contraseña</label>
+            <div class="password-wrapper">
+              <ion-input [type]="showRegisterPassword ? 'text' : 'password'" formControlName="password" placeholder="Crea una contraseña"></ion-input>
+              <ion-icon [name]="showRegisterPassword ? 'eye-off-outline' : 'eye-outline'" (click)="toggleRegisterPassword()"></ion-icon>
+            </div>
+            <div *ngIf="registerPassword?.touched && registerPassword?.invalid" class="error-msg">
+              <span *ngIf="registerPassword?.hasError('required')">La contraseña es requerida.</span>
+              <span *ngIf="registerPassword?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+            </div>
+          </div>
+          <div class="input-field" [class.field-error]="registerPasswordConfirmation?.touched && (registerPasswordConfirmation?.invalid || passwordsDoNotMatch)">
+            <label>Confirmar contraseña</label>
+            <div class="password-wrapper">
+              <ion-input [type]="showRegisterPasswordConfirmation ? 'text' : 'password'" formControlName="passwordConfirmation" placeholder="Repite tu contraseña"></ion-input>
+              <ion-icon [name]="showRegisterPasswordConfirmation ? 'eye-off-outline' : 'eye-outline'" (click)="toggleRegisterPasswordConfirmation()"></ion-icon>
+            </div>
+            <div *ngIf="registerPasswordConfirmation?.touched && registerPasswordConfirmation?.hasError('required')" class="error-msg">La confirmación de la contraseña es requerida.</div>
+            <div *ngIf="passwordsDoNotMatch" class="error-msg">Las contraseñas no coinciden.</div>
+          </div>
+
+          <ion-button expand="block" class="green-action-btn" type="button" (click)="setTab('documentos')">
+            Continuar a Documentos
+            <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+          </ion-button>
+        </form>
+      </div>
+
+      <div *ngIf="activeTab === 'documentos'" class="documents-container">
+        <h3 class="doc-title">Documentos opcionales</h3>
+        <p class="doc-subtitle">Puedes adjuntarlos ahora o completar la carga después.</p>
+
+        <div class="doc-card">
+          <div class="doc-header">
+            <span class="doc-name"><ion-icon name="card-outline"></ion-icon> Licencia de Conducir (Vigente)</span>
+            <span class="required-badge" [class.success]="licenciaUrl">
+              {{ licenciaUrl ? 'Cargado' : 'Opcional' }}
+            </span>
+          </div>
+          <div class="upload-box">
+            <ion-icon name="add-outline" *ngIf="!licenciaUrl"></ion-icon>
+            <p class="upload-title">{{ licenciaUrl ? 'Foto de Licencia Adjuntada' : 'Lado Frontal' }}</p>
+            <span class="upload-sub">Selecciona una opción</span>
+            <div class="document-actions">
+              <ion-button size="small" fill="outline" type="button" (click)="tomarFoto('licencia', CameraSource.Camera)">
+                Cámara
+              </ion-button>
+              <ion-button size="small" type="button" (click)="tomarFoto('licencia', CameraSource.Photos)">
+                Documentos
+              </ion-button>
+            </div>
           </div>
         </div>
 
-        <div class="form-group" [class.field-error]="registerPasswordConfirmation?.touched && (registerPasswordConfirmation?.invalid || passwordsDoNotMatch)">
-          <label class="field-label">Confirmar contraseña</label>
-          <div class="custom-card-input password-input-wrapper">
-            <ion-input [type]="showRegisterPasswordConfirmation ? 'text' : 'password'" formControlName="passwordConfirmation" placeholder="Repite tu contraseña"></ion-input>
-            <ion-icon [name]="showRegisterPasswordConfirmation ? 'eye-off-outline' : 'eye-outline'" (click)="toggleRegisterPasswordConfirmation()" class="eye-icon"></ion-icon>
+        <div class="doc-card">
+          <div class="doc-header">
+            <span class="doc-name"><ion-icon name="document-text-outline"></ion-icon> Boleta de Revisión Vehicular</span>
+            <span class="required-badge" [class.success]="revisionUrl">
+              {{ revisionUrl ? 'Cargado' : 'Opcional' }}
+            </span>
           </div>
-          <div *ngIf="registerPasswordConfirmation?.touched && registerPasswordConfirmation?.hasError('required')" class="error-msg">La confirmación de la contraseña es requerida.</div>
-          <div *ngIf="passwordsDoNotMatch" class="error-msg">Las contraseñas no coinciden.</div>
+          <div class="upload-box flex-row">
+            <div class="doc-info-text">
+              <p class="upload-title">Documento del I.P. (Lado Frontal)</p>
+              <span class="upload-sub">Revisión vigente de Honduras</span>
+            </div>
+            <div class="document-actions">
+              <ion-button size="small" fill="outline" type="button" (click)="tomarFoto('revision', CameraSource.Camera)">Cámara</ion-button>
+              <ion-button size="small" class="green-badge-btn" type="button" (click)="tomarFoto('revision', CameraSource.Photos)">
+                {{ revisionUrl ? 'Cambiar' : 'Documentos' }}
+              </ion-button>
+            </div>
+          </div>
         </div>
 
-        <ion-button expand="block" type="submit" class="action-btn" [disabled]="passwordForm.invalid || isLoading">
+        <div class="security-note">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          <span>Tus datos están protegidos. La validación tomará entre 24 y 48 horas hábiles.</span>
+        </div>
+
+        <ion-button expand="block" class="green-action-btn" type="button" [disabled]="isLoading" (click)="crearCuenta()">
           <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
           <span *ngIf="!isLoading">Crear cuenta</span>
         </ion-button>
-      </form>
+      </div>
     </div>
   </div>
 
