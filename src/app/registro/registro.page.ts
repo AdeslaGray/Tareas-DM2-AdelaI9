@@ -3,16 +3,23 @@ import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { addIcons } from 'ionicons';
 import { 
+  addOutline,
   arrowBackOutline, 
-  arrowForwardOutline, 
-  eyeOutline, 
+  arrowForwardOutline,
+  cameraOutline,
+  cardOutline,
+  documentTextOutline,
+  eyeOutline,
   eyeOffOutline,
   shieldCheckmarkOutline
 } from 'ionicons/icons';
 import { EmailVerificationService } from '../services/email-verification.service';
 import { AuthService } from '../services/auth.service';
+import { CloudinaryService } from '../services/cloudinary.service';
+import { RegisterPayload, RegisterService } from '../services/register.service';
 
 @Component({
   selector: 'app-registro',
@@ -22,9 +29,16 @@ import { AuthService } from '../services/auth.service';
   imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class RegistroPage implements OnInit {
+  readonly CameraSource = CameraSource;
   pasoActual: number = 1;
   showPassword: boolean = false;
   isLoading: boolean = false;
+  activeTab: 'datos' | 'documentos' = 'datos';
+  profilePhotoUrl = '';
+  licenciaUrl = '';
+  revisionUrl = '';
+  private readonly pendingDocumentUrl = 'https://placehold.co/1200x800/png?text=Documento+pendiente';
+  readonly defaultProfilePhotoUrl = 'https://ui-avatars.com/api/?name=Usuario&background=0E9F6E&color=fff&size=200';
 
   step1Form!: FormGroup;
   step2Form!: FormGroup;
@@ -37,12 +51,18 @@ export class RegistroPage implements OnInit {
     private fb: FormBuilder,
     private emailService: EmailVerificationService,
     private authService: AuthService,
+    private cloudinaryService: CloudinaryService,
+    private registerService: RegisterService,
     private toastCtrl: ToastController,
     private router: Router
   ) {
     addIcons({ 
+      addOutline,
       arrowBackOutline, 
-      arrowForwardOutline, 
+      arrowForwardOutline,
+      cameraOutline,
+      cardOutline,
+      documentTextOutline,
       eyeOutline, 
       eyeOffOutline,
       shieldCheckmarkOutline
@@ -70,8 +90,8 @@ export class RegistroPage implements OnInit {
       Phone: ['', [Validators.required, Validators.pattern(/^[0-9+()\-\s]{8,20}$/)]],
       Address: ['', [Validators.required, Validators.minLength(5)]],
       NationalId: ['', [Validators.required, Validators.minLength(5)]],
-      Documents: ['', [Validators.required, Validators.minLength(3)]],
-      ProfilePhoto: ['', [Validators.required, Validators.pattern(/^https?:\/\/.+/)]],
+      Documents: [''],
+      ProfilePhoto: [''],
       password: ['', [Validators.required, Validators.minLength(8)]],
       passwordConfirmation: ['', [Validators.required]]
     }, { validators: this.passwordsMatchValidator });
@@ -88,12 +108,57 @@ export class RegistroPage implements OnInit {
     return password === passwordConfirmation ? null : { passwordMismatch: true };
   }
 
+  setTab(tab: 'datos' | 'documentos') {
+    this.activeTab = tab;
+  }
+
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
 
   toggleRegisterPassword() {
     this.showRegisterPassword = !this.showRegisterPassword;
+  }
+
+  async tomarFoto(tipo: 'profile' | 'licencia' | 'revision', source: CameraSource = CameraSource.Prompt) {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 80,
+        allowEditing: false,
+        resultType: CameraResultType.Base64,
+        source,
+      });
+
+      if (!image.base64String) {
+        return;
+      }
+
+      this.isLoading = true;
+      this.cloudinaryService.uploadImage(image.base64String).subscribe({
+        next: (url) => {
+          this.isLoading = false;
+
+          if (tipo === 'profile') {
+            this.profilePhotoUrl = url;
+          }
+          if (tipo === 'licencia') {
+            this.licenciaUrl = url;
+          }
+          if (tipo === 'revision') {
+            this.revisionUrl = url;
+          }
+
+          void this.presentToast('Imagen subida correctamente a Cloudinary.', 'success');
+        },
+        error: (error) => {
+          this.isLoading = false;
+          const message = error?.message || 'No se pudo subir la imagen al servicio de Cloudinary.';
+          void this.presentToast(message, 'danger');
+        }
+      });
+    } catch (error) {
+      console.log('Captura cancelada o no disponible', error);
+    }
   }
 
   toggleRegisterPasswordConfirmation() {
@@ -110,6 +175,29 @@ export class RegistroPage implements OnInit {
 
   get passwordsDoNotMatch(): boolean {
     return !!(this.passwordForm.hasError('passwordMismatch') && !!this.registerPasswordConfirmation?.touched);
+  }
+
+  buildRegisterPayload(): RegisterPayload {
+    const firstName = (this.passwordForm.get('FirstName')?.value ?? '').trim();
+    const lastName = (this.passwordForm.get('LastName')?.value ?? '').trim();
+    const profileName = firstName || lastName ? `${firstName} ${lastName}`.trim() : 'Usuario';
+
+    const documents = [
+      { type: 'Licencia', url: this.licenciaUrl || this.pendingDocumentUrl },
+      { type: 'Revisión Vehicular', url: this.revisionUrl || this.pendingDocumentUrl },
+    ];
+
+    return {
+      email: (this.step1Form.get('email')?.value ?? '').trim(),
+      password: (this.registerPassword?.value ?? '').toString(),
+      firstName,
+      lastName,
+      nationalId: (this.passwordForm.get('NationalId')?.value ?? '').trim(),
+      phone: (this.passwordForm.get('Phone')?.value ?? '').trim(),
+      address: (this.passwordForm.get('Address')?.value ?? '').trim(),
+      profilePhoto: this.profilePhotoUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileName)}&background=0E9F6E&color=fff&size=200`,
+      documents,
+    };
   }
 
   async presentToast(message: string, color: 'success' | 'danger') {
@@ -259,22 +347,9 @@ export class RegistroPage implements OnInit {
 
     this.isLoading = true;
 
-    const payload = {
-      email: this.step1Form.get('email')?.value as string,
-      token: this.step2Form.get('token')?.value as string,
-      firstName: this.passwordForm.get('FirstName')?.value as string,
-      lastName: this.passwordForm.get('LastName')?.value as string,
-      FirstName: this.passwordForm.get('FirstName')?.value as string,
-      LastName: this.passwordForm.get('LastName')?.value as string,
-      Phone: this.passwordForm.get('Phone')?.value as string,
-      Address: this.passwordForm.get('Address')?.value as string,
-      NationalId: this.passwordForm.get('NationalId')?.value as string,
-      Documents: this.passwordForm.get('Documents')?.value as string,
-      ProfilePhoto: this.passwordForm.get('ProfilePhoto')?.value as string,
-      password: this.registerPassword?.value as string
-    };
+    const payload = this.buildRegisterPayload();
 
-    this.authService.registerEndpoint(payload).subscribe({
+    this.registerService.registerUser(payload).subscribe({
       next: async () => {
         this.isLoading = false;
         this.loginForm.patchValue({ email: this.step1Form.get('email')?.value });
@@ -283,7 +358,12 @@ export class RegistroPage implements OnInit {
       },
       error: async (error) => {
         this.isLoading = false;
-        const message = error?.error?.message || 'No se pudo crear la cuenta. Intenta de nuevo.';
+        const validationErrors = error?.error?.errors;
+        const message = validationErrors
+          ? Object.values(validationErrors).reduce((messages: string[], value: unknown) => {
+            return messages.concat(Array.isArray(value) ? value.map(String) : String(value));
+          }, []).join(' ')
+          : error?.error?.message || 'No se pudo crear la cuenta. Intenta de nuevo.';
         await this.presentToast(message, 'danger');
       }
     });

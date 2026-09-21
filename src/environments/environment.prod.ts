@@ -1,11 +1,13 @@
 export const environment = {
   production: true,
-  firebase: {
-    apiKey: 'TU_API_KEY',
-    authDomain: 'tu-app.firebaseapp.com',
-    projectId: 'tu-app-id',
-    storageBucket: 'tu-app.appspot.com',
-    messagingSenderId: '123456789',
-    appId: 'com.dmovil2.taxiapp',
+  FIREBASE_CONFIG: {
+    projectId: 'ceutec-driver',
+    appId: '1:873005256637:web:e7750962ce76ec5d5e4cd4',
+    storageBucket: 'ceutec-driver.firebasestorage.app',
+    apiKey: 'AIzaSyAoCDXtoWycZ9-k5xPSPhDN7m_aMRGMCeM',
+    authDomain: 'ceutec-driver.firebaseapp.com',
+    messagingSenderId: '873005256637',
+    projectNumber: '873005256637',
+    version: '2',
   },
 };
