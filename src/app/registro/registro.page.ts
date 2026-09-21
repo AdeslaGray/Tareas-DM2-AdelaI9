@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule, IonInput, ToastController } from '@ionic/angular';
@@ -26,7 +26,15 @@ import { RegisterPayload, RegisterService } from '../services/register.service';
   templateUrl: './registro.page.html',
   styleUrls: ['./registro.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule]
+  imports: [IonicModule, CommonModule, ReactiveFormsModule],
+  providers: [
+    FormBuilder,
+    EmailVerificationService,
+    AuthService,
+    CloudinaryService,
+    RegisterService,
+    ToastController
+  ]
 })
 export class RegistroPage implements OnInit {
   readonly CameraSource = CameraSource;
@@ -49,15 +57,15 @@ export class RegistroPage implements OnInit {
   showRegisterPassword = false;
   showRegisterPasswordConfirmation = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private emailService: EmailVerificationService,
-    private authService: AuthService,
-    private cloudinaryService: CloudinaryService,
-    private registerService: RegisterService,
-    private toastCtrl: ToastController,
-    private router: Router
-  ) {
+  private readonly fb = inject(FormBuilder);
+  private readonly emailService = inject(EmailVerificationService);
+  private readonly authService = inject(AuthService);
+  private readonly cloudinaryService = inject(CloudinaryService);
+  private readonly registerService = inject(RegisterService);
+  private readonly toastCtrl = inject(ToastController);
+  private readonly router = inject(Router);
+
+  constructor() {
     addIcons({ 
       addOutline,
       arrowBackOutline, 
@@ -135,7 +143,7 @@ export class RegistroPage implements OnInit {
       }
       this.isLoading = true;
       this.cloudinaryService.uploadImage(image.base64String).subscribe({
-        next: (url) => {
+        next: (url: string) => {
           this.isLoading = false;
           if (tipo === 'profile') {
             this.profilePhotoUrl = url;
@@ -148,7 +156,7 @@ export class RegistroPage implements OnInit {
           }
           void this.presentToast('Imagen subida correctamente a Cloudinary.', 'success');
         },
-        error: (error) => {
+        error: (error: any) => {
           this.isLoading = false;
           const message = error?.message || 'No se pudo subir la imagen al servicio de Cloudinary.';
           void this.presentToast(message, 'danger');
@@ -359,13 +367,13 @@ export class RegistroPage implements OnInit {
     const payload = this.buildRegisterPayload();
 
     this.registerService.registerUser(payload).subscribe({
-      next: async () => {
+      next: async (res: any) => {
         this.isLoading = false;
         this.loginForm.patchValue({ email: this.step1Form.get('email')?.value });
         this.pasoActual = 1;
         await this.presentToast('Cuenta creada correctamente. Ya puedes iniciar sesión.', 'success');
       },
-      error: async (error) => {
+      error: async (error: any) => {
         this.isLoading = false;
         const validationErrors = error?.error?.errors;
         const message = validationErrors
