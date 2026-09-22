@@ -1,0 +1,32 @@
+<ion-header class="ion-no-border map-header">
+  <div class="map-overlay-header">
+    <div class="earnings-display">
+      <span class="earnings-amount">{{ earnings }}</span>
+    </div>
+    <div class="user-icon">
+      <ion-icon name="person-outline"></ion-icon>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content class="map-content">
+  <div class="map-container" #mapContainer></div>
+  
+  <div *ngIf="isLoading" class="loading-overlay">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando mapa...</p>
+  </div>
+
+  <div class="map-controls">
+    <ion-button (click)="centerOnCurrentLocation()" class="recenter-button" fill="clear">
+      <ion-icon name="navigate" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="availability-card">
+    <div class="availability-status" [class.available]="isAvailable" [class.unavailable]="!isAvailable">
+      <span class="status-dot"></span>
+      <span class="status-text">{{ isAvailable ? 'DISPONIBLE' : 'NO DISPONIBLE' }}</span>
+    </div>
+  </div>
+</ion-content>
