@@ -4,7 +4,7 @@
       <span class="earnings-amount">{{ earnings }}</span>
     </div>
     <div class="user-icon">
-      <ion-icon name="person-outline"></ion-icon>
+      <ion-icon name="person-circle-outline"></ion-icon>
     </div>
   </div>
 </ion-header>
@@ -24,7 +24,7 @@
   </div>
 
   <div class="availability-card">
-    <div class="availability-status" [class.available]="isAvailable" [class.unavailable]="!isAvailable">
+    <div class="availability-status" [class.available]="isAvailable" [class.unavailable]="!isAvailable" (click)="toggleAvailability()">
       <span class="status-dot"></span>
       <span class="status-text">{{ isAvailable ? 'DISPONIBLE' : 'NO DISPONIBLE' }}</span>
     </div>

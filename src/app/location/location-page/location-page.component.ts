@@ -5,6 +5,7 @@ import { addIcons } from 'ionicons';
 import {
   navigate,
   location,
+  personCircleOutline,
 } from 'ionicons/icons';
 import { Geolocation, Position } from '@capacitor/geolocation';
 import { Capacitor } from '@capacitor/core';
@@ -22,7 +23,7 @@ export class LocationPageComponent implements OnInit, AfterViewInit, OnDestroy {
   map: GoogleMap | null = null;
   isLoading = true;
   currentPosition: Position | null = null;
-  earnings = 'L. 1,450';
+  earnings = '$154.75';
   isAvailable = true;
 
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
@@ -33,6 +34,7 @@ export class LocationPageComponent implements OnInit, AfterViewInit, OnDestroy {
     addIcons({
       navigate,
       location,
+      personCircleOutline,
     });
   }
 
@@ -92,7 +94,7 @@ export class LocationPageComponent implements OnInit, AfterViewInit, OnDestroy {
             lat: this.currentPosition?.coords.latitude || 14.08, // Default to Tegucigalpa
             lng: this.currentPosition?.coords.longitude || -87.17,
           },
-          zoom: 15,
+          zoom: 16,
         },
       });
 
