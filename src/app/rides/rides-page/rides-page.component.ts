@@ -21,7 +21,7 @@ import {
   imports: [IonicModule, CommonModule],
 })
 export class RidesPageComponent implements OnInit {
-  showYujjuBanner = true;
+  showYujjuBanner = false;
 
   constructor(private toastCtrl: ToastController) {
     addIcons({
@@ -36,19 +36,7 @@ export class RidesPageComponent implements OnInit {
     });
   }
 
-  async ngOnInit() {
-    const toast = await this.toastCtrl.create({
-      message: '🎉 ¡Yujjuu! Bienvenida de nuevo a Taxi Driver App',
-      duration: 2500,
-      position: 'top',
-      color: 'success',
-      cssClass: 'yujju-toast',
-    });
-
-    await toast.present();
-
-    setTimeout(() => {
-      this.showYujjuBanner = false;
-    }, 4500);
+  ngOnInit() {
+    // Funcionalidad de yujju eliminada a petición del usuario
   }
 }
