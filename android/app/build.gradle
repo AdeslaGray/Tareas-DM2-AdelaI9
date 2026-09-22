@@ -3,6 +3,10 @@ apply plugin: 'com.android.application'
 android {
     namespace = "com.dmovil2.taxiapp"
     compileSdk = rootProject.ext.compileSdkVersion
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
     defaultConfig {
         applicationId "com.dmovil2.taxiapp"
         minSdkVersion rootProject.ext.minSdkVersion

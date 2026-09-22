@@ -10,4 +10,5 @@ export const environment = {
     projectNumber: '873005256637',
     version: '2',
   },
+  GOOGLE_MAPS_API_KEY: 'YOUR_GOOGLE_MAPS_API_KEY_HERE',
 };
